@@ -1,0 +1,17 @@
+div.pagination ul {
+    display: inline-flex;
+    margin-left: 0;
+    padding-left: 0;
+}
+div.pagination ul li {
+    width: 30px;
+    list-style-type: none;
+    background-color: aliceblue;
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 5px;
+    border: 2px solid #C2CCD8;
+    margin: 0px 2px;
+    cursor: pointer;
+}
