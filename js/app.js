@@ -1,6 +1,7 @@
 (function() {
-    var app = angular.module('demo', ['pagination'])
-        .factory('getData', function () {
+    var app = angular.module('demo', ['pagination']);
+
+    app.factory('getData', function () {
             return [
                 {'name': 'Name1'},
                 {'name': 'Name2'},
@@ -13,8 +14,9 @@
                 {'name': 'Name9'},
                 {'name': 'Name10'}
             ]
-        })
-        .factory('getDataJson', function($http, $q) {
+        });
+
+    app.factory('getDataJson', function($http, $q) {
             var deferred = $q.defer();
             $http.jsonp('http://angular.js/paginator/data.json').success(function(data) {
                 deferred.resolve(data);
@@ -22,11 +24,13 @@
                 deferred.reject(reason);
             });
             return deferred.promise;
-        })
-        .controller('demoController', ['$scope', 'getData',  function ($scope, data) {
+        });
+
+    app.controller('demoController', ['$scope', 'getData',  function ($scope, data) {
             // для пагинатора надо заполнить след данные
-            $scope.perPage = 1;
-            $scope.data = data;
+            $scope.perPage = 5;
+            $scope.paginationData = data;
             $scope.currentPage = 1;
+            //
         }]);
 })();

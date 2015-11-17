@@ -1,5 +1,7 @@
 <div class="pagination">
     <ul>
-        <li ng-repeat="page in pages">{{page}}</li>
+        <li ng-click="changePage('prev')">«</li>
+        <li ng-repeat="page in pages" ng-click="changePage(page)">{{page}}</li>
+        <li ng-click="changePage('next')">»</li>
     </ul>
 </div>
