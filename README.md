@@ -6,7 +6,8 @@ $scope.perPage, $scope.currentPage, $scope.paginationData (данные, кот�
 
 Пример
 
-index.html
+`index.html`
+~~~
 <body ng-app="demo">
 <div ng-controller="demoController">
     <label>
@@ -16,8 +17,10 @@ index.html
     <div pagination></div>
 </div>
 </body>
+~~~
 
-app.js
+`app.js`
+~~~
 (function() {
   // включаем зависимость от директивы pagination
   var app = angular.module('demo', ['pagination']);
@@ -29,3 +32,4 @@ app.js
     $scope.currentPage = 1;
   }]);
 })();
+~~~
