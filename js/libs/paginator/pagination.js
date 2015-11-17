@@ -7,11 +7,10 @@
                 scope: false,
                 replace: true,
                 controller: ['$scope', function($scope) {
-
                     $scope.$watch('currentPage', function() {
                         $scope.pagesCount = Math.ceil($scope.paginationData.length/$scope.perPage);
                         $scope.data = $scope.paginationData.slice((($scope.currentPage-1) * $scope.perPage),($scope.currentPage * $scope.perPage));
-                        $scope.getPages();
+                        getPages();
                     });
 
                     $scope.$watch('perPage', function() {
@@ -19,85 +18,58 @@
                         if ($scope.perPage > $scope.paginationData.length) {$scope.perPage = $scope.paginationData.length;}
                         $scope.pagesCount = Math.ceil($scope.paginationData.length/$scope.perPage);
                         $scope.data = $scope.paginationData.slice((($scope.currentPage-1) * $scope.perPage),($scope.currentPage * $scope.perPage));
-                        $scope.getPages();
+                        getPages();
                     });
 
-                    $scope.currentPage = parseInt($scope.currentPage);
-
-
-                    $scope.data = $scope.paginationData.slice((($scope.currentPage-1) * $scope.perPage),($scope.currentPage * $scope.perPage));
-
-                    $scope.getPages = function() {
+                    getPages = function() {
                         var pages = [];
-                        if ( $scope.pagesCount > 5 ) {
-                            if ( $scope.currentPage < $scope.pagesCount-1 ) {
-                                if ( $scope.currentPage == 1 ) {
-                                    pages = [1, 2, '...', $scope.pagesCount];
-                                }
-                                else if ( $scope.currentPage == 2 ) {
-                                    pages = [1, 2, '...', $scope.pagesCount];
-                                }
-                                else if ( $scope.currentPage == $scope.pagesCount-1 ) {
-                                    pages = [1, '...', $scope.currentPage, $scope.pagesCount];
-                                }
-                                else {
-                                    pages = [1, '..', $scope.currentPage, '...', $scope.pagesCount];
-                                }
+                        var range = getRange($scope.currentPage);
+                        var flag = false;
+                        for (var i=1; i<=$scope.pagesCount; i++) {
+                            if(i==1 || in_array(i, range) || i==$scope.pagesCount ) {
+                                pages.push({'title': i});
+                                flag = false;
                             }
                             else {
-                                pages = [1, '..', $scope.pagesCount-1, $scope.pagesCount];
-                            }
-
-                        }
-                        else {
-                            for (var i=1; i<=$scope.pagesCount; i++) {
-                                pages.push(i);
+                                if (!flag) {
+                                    pages.push({'title': '...', 'class': 'disabled'});
+                                    flag = true;
+                                }
                             }
                         }
                         $scope.pages = pages;
                     };
-
-                    var pages = [];
-                    if ( $scope.pagesCount > 5 ) {
-                        if ( $scope.currentPage < $scope.pagesCount-1 ) {
-                            if ( $scope.currentPage == 1 ) {
-                                pages = [1, 2, '...', $scope.pagesCount];
-                            }
-                            else if ( $scope.currentPage == 2 ) {
-                                pages = [1, 2, '...', $scope.pagesCount];
-                            }
-                            else if ( $scope.currentPage == $scope.pagesCount-1 ) {
-                                pages = [1, '...', $scope.currentPage, $scope.pagesCount];
-                            }
-                            else {
-                                pages = [1, '..', $scope.currentPage, '...', $scope.pagesCount];
+                    in_array = function(value, arr) {
+                        for (var i=0; i<arr.length; i++) {
+                            if (arr[i] == value) {
+                                return true;
                             }
                         }
-                        else {
-                            pages = [1, '..', $scope.pagesCount-1, $scope.pagesCount];
+                        return false;
+                    };
+                    getRange = function(num) {
+                        var result = [];
+                        for( var i=num-2; i<= num+2; i++) {
+                            if ( i >= 1 ) {
+                                result.push(i);
+                            }
                         }
-
-                    }
-                    else {
-                        for (var i=1; i<=$scope.pagesCount; i++) {
-                            pages.push(i);
-                        }
-                    }
-                    $scope.pages = pages;
+                        return result;
+                    };
                     $scope.changePage = function(page) {
                         if ( page == 'prev' ) {
-                            $scope.currentPage--;
-                            if ($scope.currentPage < 1) {$scope.currentPage = 1;}
+                            $scope.currentPage = $scope.currentPage-1 > 1 ? $scope.currentPage-1 : 1;
                         }
                         else if ( page == 'next' ) {
-                            $scope.currentPage++;
-                            if ($scope.currentPage > $scope.pagesCount) {$scope.currentPage = $scope.pagesCount;}
+                            $scope.currentPage = $scope.currentPage+1 > $scope.pagesCount ? $scope.pagesCount : $scope.currentPage+1;
+                        }
+                        else if ( isNaN(parseInt(page.title)) ) {
+                            return false;
                         }
                         else {
-                            page = parseInt(page);
-                            if ( page != 0 ) {
-                                $scope.currentPage = page;
-                            }
+                            page = page.title;
+                            page = (page < 1 ? 1 : page) > $scope.pagesCount ? $scope.pagesCount : page;
+                            $scope.currentPage = page;
                         }
                     }
                 }]
