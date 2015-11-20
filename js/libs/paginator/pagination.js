@@ -7,19 +7,36 @@
                 scope: false,
                 replace: true,
                 controller: ['$scope', function($scope) {
-                    $scope.$watch('currentPage', function() {
-                        $scope.pagesCount = Math.ceil($scope.paginationData.length/$scope.perPage);
-                        $scope.data = $scope.paginationData.slice((($scope.currentPage-1) * $scope.perPage),($scope.currentPage * $scope.perPage));
-                        getPages();
-                    });
+                    $scope.async = $scope.async || false;
 
-                    $scope.$watch('perPage', function() {
-                        $scope.perPage = parseInt($scope.perPage) || 1;
-                        if ($scope.perPage > $scope.paginationData.length) {$scope.perPage = $scope.paginationData.length;}
-                        $scope.pagesCount = Math.ceil($scope.paginationData.length/$scope.perPage);
-                        $scope.data = $scope.paginationData.slice((($scope.currentPage-1) * $scope.perPage),($scope.currentPage * $scope.perPage));
-                        getPages();
-                    });
+                    setWatchers = function() {
+                        $scope.$watch('currentPage', function() {
+                            $scope.pagesCount = Math.ceil($scope.paginationData.length/$scope.perPage);
+                            $scope.data = $scope.paginationData.slice((($scope.currentPage-1) * $scope.perPage),($scope.currentPage * $scope.perPage));
+                            getPages();
+                        });
+
+                        $scope.$watch('perPage', function() {
+                            $scope.perPage = parseInt($scope.perPage) || 1;
+                            if ($scope.perPage > $scope.paginationData.length) {$scope.perPage = $scope.paginationData.length;}
+                            $scope.pagesCount = Math.ceil($scope.paginationData.length/$scope.perPage);
+                            if ($scope.currentPage > $scope.pagesCount) {
+                                $scope.currentPage = $scope.pagesCount;
+                            }
+                            $scope.data = $scope.paginationData.slice((($scope.currentPage-1) * $scope.perPage),($scope.currentPage * $scope.perPage));
+                            getPages();
+                        });
+                    };
+
+                    if ($scope.async) {
+                        $scope.paginationData.then(function(data) {
+                            $scope.paginationData = data;
+                            setWatchers();
+                        });
+                    }
+                    else {
+                        setWatchers();
+                    }
 
                     getPages = function() {
                         var pages = [];
@@ -71,7 +88,7 @@
                             page = (page < 1 ? 1 : page) > $scope.pagesCount ? $scope.pagesCount : page;
                             $scope.currentPage = page;
                         }
-                    }
+                    };
                 }]
             }
         });
